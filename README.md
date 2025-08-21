@@ -65,6 +65,10 @@ BARK_URL=https://api.day.app # 默认使用 APP 自带服务器
 
 4. 运行脚本
 
+```bash
+npm start
+```
+
 ## 青龙面板
 
 1. 添加订阅  https://github.com/waistu/Ninebot.git
