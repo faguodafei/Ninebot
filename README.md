@@ -32,6 +32,21 @@
 
 # 使用方法
 
+## 抓包方法
+
+脚本签到需要用账号的**设备 ID**（DEVICE_ID）和**授权令牌**（AUTHORIZATION），通过抓包可以获取，这里以 IOS 为例（安卓抓包自行尝试）。
+
+1. 首先，确保手机已安装九号出行 APP，并登录自己的账号。
+2. 在 App Store 搜索下载 **Stream** ，根据提示配置CA证书，然后在手机中进行证书信任设置。
+
+![IMG-61ABB21674FC63E60A3E40185AD38F3B.webp](https://api.minio.waistu.com/bucket-alpha-bravo-charlie-12345/upload/2025/08/21/68a70dd3471f9.webp)
+
+3. 打开 **Stream** 工具，点击开始抓包，然后切换至九号 APP，打开签到页面，之后回到抓包工具，结束抓包。
+
+![IMG-D0C023BE8637EAE98F79A35344F425D9.webp](https://api.minio.waistu.com/bucket-alpha-bravo-charlie-12345/upload/2025/08/21/68a70dfd0467b.webp)
+
+4. 在抓包历史中找到刚抓包的数据，搜索 **api/user-sign/v2/sign**  字段，点击搜索结果中的第一个 POST 请求数据，打开切换至请求头部分，下面的 Authorization 和 device_id 就是后面需要用的授权令牌和设备 ID。
+
 ## 本地运行
 
 1. 本地终端克隆仓库
