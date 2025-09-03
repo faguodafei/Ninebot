@@ -204,81 +204,39 @@ class NineBot {
     }
 }
 
-// 发送Bark通知（支持完整参数配置）
-async function sendBarkNotification(title, message) {
-    // 从环境变量获取Bark配置
-    const barkUrl = process.env.BARK_URL || "https://api.day.app";
-    const barkKey = process.env.BARK_KEY;
-
-    // 没有Bark密钥则不发送
-    if (!barkKey) {
-        console.log("未配置BARK_KEY，跳过Bark通知");
+// 发送Server酱通知（支持完整参数配置）
+async function sendServerChanNotification(title, message) {
+    // 从环境变量获取Server酱SCKEY
+    const sckey = process.env.SERVER_CHAN_SCKEY;
+    if (!sckey) {
+        console.log("未配置SERVER_CHAN_SCKEY，跳过Server酱通知");
         return false;
     }
 
     try {
-        // 构建基础URL
-        let url = `${barkUrl}/${barkKey}/${encodeURIComponent(title)}/${encodeURIComponent(message)}`;
+        // 构建请求数据（title为消息标题，desp为消息内容）
+        const postData = {
+            text: title,          // 消息标题（必填，最长256字节）
+            desp: message         // 消息内容（必填，最长64KB，支持Markdown）
+        };
 
-        // 收集所有可选参数
-        const params = [];
-
-        // 通知分组
-        if (process.env.BARK_GROUP) {
-            params.push(`group=${encodeURIComponent(process.env.BARK_GROUP)}`);
-        }
-
-        // 通知图标
-        if (process.env.BARK_ICON) {
-            params.push(`icon=${encodeURIComponent(process.env.BARK_ICON)}`);
-        }
-
-        // 通知铃声
-        if (process.env.BARK_SOUND) {
-            params.push(`sound=${encodeURIComponent(process.env.BARK_SOUND)}`);
-        }
-
-        // 点击跳转URL
-        if (process.env.BARK_URL_JUMP) {
-            params.push(`url=${encodeURIComponent(process.env.BARK_URL_JUMP)}`);
-        }
-
-        // 可复制文本
-        if (process.env.BARK_COPY) {
-            // 提取连续天数用于替换变量
-            const dayMatch = message.match(/连续签到天数: (\d+)天/);
-            const day = dayMatch ? dayMatch[1] : "未知";
-            const copyText = process.env.BARK_COPY.replace('%day%', day);
-            params.push(`copy=${encodeURIComponent(copyText)}`);
-        }
-
-        // 自动复制
-        if (process.env.BARK_AUTO_COPY === '1') {
-            params.push(`autoCopy=1`);
-        }
-
-        // 添加参数到URL
-        if (params.length > 0) {
-            url += `?${params.join('&')}`;
-        }
-
-        console.log(`发送Bark通知: ${url}`);
-
-        // 发送请求
-        const response = await axios.get(url, { timeout: 5000 });
-
-        if (response.data.code === 200) {
-            console.log("Bark通知发送成功");
+        // 发送POST请求到Server酱API
+        const response = await axios.post(`https://sc.ftqq.com/${sckey}.send`, postData);
+        
+        // 检查响应结果（200表示成功，其他状态码表示失败）
+        if (response.data && response.data.errno === 0) {
+            console.log("Server酱通知发送成功");
             return true;
         } else {
-            console.error("Bark通知发送失败:", response.data);
+            console.error("Server酱通知发送失败:", response.data?.errmsg || "未知错误");
             return false;
         }
     } catch (error) {
-        console.error("发送Bark通知异常:", error.message);
+        console.error("发送Server酱通知异常:", error.message);
         return false;
     }
 }
+
 
 // 初始化并执行签到
 async function init() {
@@ -339,7 +297,7 @@ async function init() {
     }).join("\n\n");
 
     // 发送Bark通知
-    await sendBarkNotification(title, message);
+    await sendServerChanNotification(title, message);
 }
 
 // 启动执行
