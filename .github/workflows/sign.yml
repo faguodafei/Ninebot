@@ -34,3 +34,5 @@ jobs:
           BARK_ICON: ${{ secrets.BARK_ICON }}
           BARK_URL: ${{ secrets.BARK_URL }}
           SERVER_CHAN_SCKEY: ${{ secrets.SERVER_CHAN_SCKEY }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
