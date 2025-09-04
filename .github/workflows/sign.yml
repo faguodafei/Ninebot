@@ -36,3 +36,4 @@ jobs:
           SERVER_CHAN_SCKEY: ${{ secrets.SERVER_CHAN_SCKEY }}
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          PUSHDEER_PUSHKEY: ${{ secrets.PUSHDEER_PUSHKEY }}
