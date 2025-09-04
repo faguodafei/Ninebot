@@ -407,7 +407,7 @@ async function sendWeComGroupNotification(title, message) {
 
     try {
         // 构建企业微信群机器人请求地址
-        const webhookUrl = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${webhookKey}`;
+        const webhookUrl = `https://work.weixin.qq.com/wework_admin/common/openBotProfile/${webhookKey}`;
         
         // 构建Markdown格式的请求数据（推荐，支持加粗、链接、列表等）
         const postData = {
