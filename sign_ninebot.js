@@ -396,48 +396,6 @@ async function sendPushDeerNotification(title, message) {
         return false;
     }
 }
-// 发送企业微信群机器人通知（支持文本/Markdown格式）
-async function sendWeComGroupNotification(title, message) {
-    // 从环境变量获取企业微信群机器人Webhook密钥
-    const webhookKey = process.env.WECHAT_GROUP_WEBHOOK_KEY;
-    if (!webhookKey) {
-        console.log("未配置WECHAT_GROUP_WEBHOOK_KEY，跳过企业微信群通知");
-        return false;
-    }
-
-    try {
-        // 构建企业微信群机器人请求地址
-        const webhookUrl = `https://work.weixin.qq.com/wework_admin/common/openBotProfile/${webhookKey}`;
-        
-        // 构建Markdown格式的请求数据（推荐，支持加粗、链接、列表等）
-        const postData = {
-            msgtype: "markdown",      // 消息类型：Markdown（支持格式化）
-            markdown: {
-                content: `**${title}**\n\n${message}` // Markdown内容（支持标题、加粗、换行）
-                // 可选：@全体成员（@all）或@指定成员（@手机号）
-                // mentioned_list: ["@all"], 
-                // mentioned_mobile_list: ["13800001111"]
-            }
-        };
-
-        // 发送POST请求（设置JSON头）
-        const response = await axios.post(webhookUrl, postData, {
-            headers: { "Content-Type": "application/json" } // 必须设置JSON头
-        });
-
-        // 检查响应结果（errcode=0表示成功）
-        if (response.data && response.data.errcode === 0) {
-            console.log("企业微信群通知发送成功");
-            return true;
-        } else {
-            console.error("企业微信群通知发送失败:", response.data?.errmsg || "未知错误");
-            return false;
-        }
-    } catch (error) {
-        console.error("发送企业微信群通知异常:", error.message);
-        return false;
-    }
-}
 
 
 // 初始化并执行签到
@@ -504,7 +462,6 @@ async function init() {
     await sendBarkNotification(title, message);
     await sendPushoverNotification(title, message);
     await sendPushDeerNotification(title, message);
-    await sendWeComGroupNotification(title, message);
     
     
     
