@@ -361,6 +361,42 @@ async function sendPushoverNotification(title, message) {
     }
 }
 
+// 发送PushDeer通知（支持完整参数配置）
+async function sendPushDeerNotification(title, message) {
+    // 从环境变量获取PushDeer PushKey（替代Server酱的SCKEY）
+    const pushKey = process.env.PUSHDEER_PUSHKEY;
+    if (!pushKey) {
+        console.log("未配置PUSHDEER_PUSHKEY，跳过PushDeer通知");
+        return false;
+    }
+
+    try {
+        // 构建PushDeer请求参数（text为标题，desp为内容，type为格式，默认markdown）
+        const queryParams = new URLSearchParams({
+            pushkey: pushKey,    // 必填：PushKey
+            text: title,         // 必填：消息标题（最长256字节）
+            desp: message,       // 必填：消息内容（最长64KB，支持Markdown）
+            type: "markdown"     // 选填：消息格式（text/plain/markdown/image，默认markdown）
+        });
+
+        // 发送GET请求到PushDeer API（也可使用POST，需调整headers）
+        const apiUrl = `https://api2.pushdeer.com/message/push?${queryParams}`;
+        const response = await axios.get(apiUrl);
+
+        // 检查响应结果（code=0表示成功，非0表示失败）
+        if (response.data && response.data.code === 0) {
+            console.log("PushDeer通知发送成功");
+            return true;
+        } else {
+            console.error("PushDeer通知发送失败:", response.data?.error || "未知错误");
+            return false;
+        }
+    } catch (error) {
+        console.error("发送PushDeer通知异常:", error.message);
+        return false;
+    }
+}
+
 
 // 初始化并执行签到
 async function init() {
@@ -425,6 +461,8 @@ async function init() {
     // 发送Bark通知
     await sendBarkNotification(title, message);
     await sendPushoverNotification(title, message);
+    await sendPushDeerNotification(title, message);
+    
     
 }
 
