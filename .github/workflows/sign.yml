@@ -29,4 +29,8 @@ jobs:
           NINEBOT_DEVICE_ID: ${{ secrets.NINEBOT_DEVICE_ID }}
           NINEBOT_AUTHORIZATION: ${{ secrets.NINEBOT_AUTHORIZATION }}
           NINEBOT_ACCOUNTS: ${{ secrets.NINEBOT_ACCOUNTS }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_GROUP: ${{ secrets.BARK_GROUP }}
+          BARK_ICON: ${{ secrets.BARK_ICON }}
+          BARK_URL: ${{ secrets.BARK_URL }}
           SERVER_CHAN_SCKEY: ${{ secrets.SERVER_CHAN_SCKEY }}
