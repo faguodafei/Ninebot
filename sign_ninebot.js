@@ -313,6 +313,54 @@ async function sendBarkNotification(title, message) {
     }
 }
 
+// 发送Pushover通知
+async function sendPushoverNotification(title, message) {
+    // 从环境变量获取Pushover配置
+    const pushoverToken = process.env.PUSHOVER_TOKEN;
+    const pushoverUser = process.env.PUSHOVER_USER;
+
+    // 检查必要配置是否存在
+    if (!pushoverToken || !pushoverUser) {
+        console.log("未配置PUSHOVER_TOKEN或PUSHOVER_USER，跳过Pushover通知");
+        return false;
+    }
+
+    try {
+        // 构建Pushover API请求URL
+        const apiUrl = "https://api.pushover.net/1/messages.json";
+        
+        // 构造请求数据
+        const requestData = {
+            token: pushoverToken,       // 应用API Token
+            user: pushoverUser,         // 设备User Key
+            message: message,           // 通知内容（必填）
+            title: title,               // 通知标题（必填）
+            priority: 0,                // 优先级（0=普通，1=高，2=紧急）
+            sound: "pushover",          // 提示音（参考Pushover官方文档）
+            timestamp: Math.floor(Date.now() / 1000)  // 时间戳（Unix时间）
+        };
+
+        console.log(`发送Pushover通知: ${title} - ${message}`);
+
+        // 发送POST请求
+        const response = await axios.post(apiUrl, requestData, {
+            timeout: 5000  // 超时时间5秒
+        });
+
+        // 检查响应状态
+        if (response.data.status === 1) {
+            console.log("Pushover通知发送成功");
+            return true;
+        } else {
+            console.error("Pushover通知发送失败:", response.data.errors || "未知错误");
+            return false;
+        }
+    } catch (error) {
+        console.error("发送Pushover通知异常:", error.message);
+        return false;
+    }
+}
+
 
 // 初始化并执行签到
 async function init() {
@@ -376,6 +424,8 @@ async function init() {
     await sendServerChanNotification(title, message);
     // 发送Bark通知
     await sendBarkNotification(title, message);
+    await sendPushoverNotification(title, message);
+    
 }
 
 // 启动执行
