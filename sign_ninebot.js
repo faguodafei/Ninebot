@@ -397,6 +397,46 @@ async function sendPushDeerNotification(title, message) {
     }
 }
 
+// 发送PushPlus通知（支持多账号汇总）
+async function sendPushPlusNotification(title, message) {
+    // 从环境变量获取PushPlus配置
+    const pushPlusToken = process.env.PUSH_PLUS_TOKEN; // 必填：PushPlus用户令牌
+    const pushPlusTopic = process.env.PUSH_PLUS_TOPIC; // 选填：群组编码（不填则发送给个人）
+
+    if (!pushPlusToken) {
+        console.log("未配置PUSH_PLUS_TOKEN，跳过PushPlus通知");
+        return false;
+    }
+
+    try {
+        // 构建请求数据
+        const requestData = {
+            token: pushPlusToken,
+            title: title, // 通知标题（如"九号出行签到结果"）
+            content: message, // 通知内容（汇总各账号签到结果）
+            template: "html", // 模板类型（html支持格式化，如换行、加粗）
+            topic: pushPlusTopic // 群组编码（可选，不填则发送给个人）
+        };
+
+        // 发送POST请求到PushPlus API
+        const response = await axios.post("http://www.pushplus.plus/send", requestData, {
+            timeout: 5000 // 请求超时时间（5秒）
+        });
+
+        // 检查响应结果
+        if (response.data.code === 200) {
+            console.log("PushPlus通知发送成功");
+            return true;
+        } else {
+            console.error("PushPlus通知发送失败:", response.data.msg);
+            return false;
+        }
+    } catch (error) {
+        console.error("发送PushPlus通知异常:", error.message);
+        return false;
+    }
+}
+
 
 // 初始化并执行签到
 async function init() {
@@ -462,6 +502,8 @@ async function init() {
     await sendBarkNotification(title, message);
     await sendPushoverNotification(title, message);
     await sendPushDeerNotification(title, message);
+    // 发送PushPlus通知
+    await sendPushPlusNotification(title, message);
     
     
     
